@@ -24,28 +24,7 @@ JSON:
     }
 }
 ```
-
-Swift code with `Codable`:
-
-``` swift
-struct User: Codable {
-    let id: Int
-    let name: String
-    struct Twitter: Codable {
-        let profileURL: URL
-        let createdAt: Date
-        private enum CodingKeys: String, CodingKey {
-            case profileURL = "profile_url"
-            case createdAt = "created_at"
-        }
-    }
-    let twitter: Twitter
-}
-```
-
-Note that there use **Property Map** `profile_url: profileURL` to change the property name (Automatically generated will be `profileUrl`).
-
-Swift code without `Decodable`:
+Swift code with `Decodable`:
 
 ``` swift
 struct User: Decodable {
@@ -81,6 +60,27 @@ struct User: Decodable {
 }
 
 ```
+
+Swift code with `Codable`:
+
+``` swift
+struct User: Codable {
+    let id: Int
+    let name: String
+    struct Twitter: Codable {
+        let profileURL: URL
+        let createdAt: Date
+        private enum CodingKeys: String, CodingKey {
+            case profileURL = "profile_url"
+            case createdAt = "created_at"
+        }
+    }
+    let twitter: Twitter
+}
+```
+
+Note that there use **Property Map** `profile_url: profileURL` to change the property name (Automatically generated will be `profileUrl`).
+
 
 Baby can also handle array root json, it will automatically merge properties for objects in array.
 
