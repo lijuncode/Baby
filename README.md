@@ -45,56 +45,41 @@ struct User: Codable {
 
 Note that there use **Property Map** `profile_url: profileURL` to change the property name (Automatically generated will be `profileUrl`).
 
-Swift code without `Codable`:
+Swift code without `Decodable`:
 
 ``` swift
-struct User {
-    let id: Int
-    let name: String
-    struct Twitter {
-        let profileURL: URL
-        let createdAt: Date
-        init(profileURL: URL, createdAt: Date) {
-            self.profileURL = profileURL
-            self.createdAt = createdAt
-        }
-        init?(json: [String: Any]) {
-            guard let profileURLString = json["profile_url"] as? String else { return nil }
-            guard let profileURL = URL(string: profileURLString) else { return nil }
-            guard let createdAtString = json["created_at"] as? String else { return nil }
-            guard let createdAt = DateFormatter.iso8601.date(from: createdAtString) else { return nil }
-            self.init(profileURL: profileURL, createdAt: createdAt)
-        }
-    }
-    let twitter: Twitter
-    init(id: Int, name: String, twitter: Twitter) {
-        self.id = id
-        self.name = name
-        self.twitter = twitter
-    }
-    init?(json: [String: Any]) {
-        guard let id = json["id"] as? Int else { return nil }
-        guard let name = json["name"] as? String else { return nil }
-        guard let twitterJSONDictionary = json["twitter"] as? [String: Any] else { return nil }
-        guard let twitter = Twitter(json: twitterJSONDictionary) else { return nil }
-        self.init(id: id, name: name, twitter: twitter)
-    }
+struct User: Decodable {
+	let id: Int?
+	let name: String?
+	struct Twitter: Decodable {
+		let profileUrl: URL?
+		let createdAt: Date?
+		private enum CodingKeys: String, CodingKeyPath {
+			case profileUrl = "profile_url"
+			case createdAt = "created_at"
+		}
+		static func decode(_ ext: Extractor) throws -> struct {
+			return try struct(
+				profileUrl: try? URLTransformer.apply(ext <| CodingKeys.profileUrl.keyPath),,
+				createdAt: try? dateTransformer.apply(ext <| CodingKeys.createdAt.keyPath),
+			)
+		}
+	}
+	let twitter: Twitter?
+	private enum CodingKeys: String, CodingKeyPath {
+		case id
+		case name
+		case twitter
+	}
+	static func decode(_ ext: Extractor) throws -> struct {
+		return try struct(
+			id: ext <|? CodingKeys.id.keyPath,,
+			name: ext <|? CodingKeys.name.keyPath,,
+			twitter: ext <|? CodingKeys.twitter.keyPath,
+		)
+	}
 }
-```
 
-You may need a `DateFormatter` extension:
-
-``` swift
-extension DateFormatter {
-
-    static let iso8601: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.timeZone = TimeZone(abbreviation: "UTC")
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ"
-        return formatter
-    }()
-}
 ```
 
 Baby can also handle array root json, it will automatically merge properties for objects in array.
@@ -132,3 +117,5 @@ BitCoin: `1EcDVcsQPeg7QVGdCFkQpHXKQMjPJmbixz`
 ## License
 
 MIT
+
+
