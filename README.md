@@ -28,35 +28,35 @@ Swift code with `Decodable`:
 
 ``` swift
 struct User: Decodable {
-	let id: Int?
-	let name: String?
-	struct Twitter: Decodable {
-		let profileUrl: URL?
-		let createdAt: Date?
-		private enum CodingKeys: String, CodingKeyPath {
-			case profileUrl = "profile_url"
-			case createdAt = "created_at"
-		}
-		static func decode(_ ext: Extractor) throws -> struct {
-			return try struct(
-				profileUrl: try? URLTransformer.apply(ext <| CodingKeys.profileUrl.keyPath),,
-				createdAt: try? dateTransformer.apply(ext <| CodingKeys.createdAt.keyPath),
-			)
-		}
-	}
-	let twitter: Twitter?
-	private enum CodingKeys: String, CodingKeyPath {
-		case id
-		case name
-		case twitter
-	}
-	static func decode(_ ext: Extractor) throws -> struct {
-		return try struct(
-			id: ext <|? CodingKeys.id.keyPath,,
-			name: ext <|? CodingKeys.name.keyPath,,
-			twitter: ext <|? CodingKeys.twitter.keyPath,
-		)
-	}
+  let id: Int?
+  let name: String?
+  struct Twitter: Decodable {
+    let profileUrl: URL?
+    let createdAt: Date?
+    private enum CodingKeys: String, CodingKeyPath {
+      case profileUrl = "profile_url"
+      case createdAt = "created_at"
+    }
+    static func decode(_ ext: Extractor) throws -> struct {
+      return try struct(
+        profileUrl: try? URLTransformer.apply(ext <| CodingKeys.profileUrl.keyPath),
+        createdAt: try? dateTransformer.apply(ext <| CodingKeys.createdAt.keyPath)
+      )
+    }
+  }
+  let twitter: Twitter?
+  private enum CodingKeys: String, CodingKeyPath {
+    case id
+    case name
+    case twitter
+  }
+  static func decode(_ ext: Extractor) throws -> struct {
+    return try struct(
+      id: ext <|? CodingKeys.id.keyPath,
+      name: ext <|? CodingKeys.name.keyPath,
+      twitter: ext <|? CodingKeys.twitter.keyPath
+    )
+  }
 }
 
 ```

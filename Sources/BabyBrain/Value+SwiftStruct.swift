@@ -286,19 +286,19 @@ extension Value {
     let property = key.propertyName(meta: meta)
     switch self {
     case .empty:
-      lines.append("\(deepIndent)\(property): ext <|? CodingKeys.\(property).keyPath,")
+      lines.append("\(deepIndent)\(property): ext <|? CodingKeys.\(property).keyPath")
     case .null:
-      lines.append("\(deepIndent)\(property): ext <|? CodingKeys.\(property).keyPath,")
+      lines.append("\(deepIndent)\(property): ext <|? CodingKeys.\(property).keyPath")
     case .bool, .number, .string:
-      lines.append("\(deepIndent)\(property): ext <|? CodingKeys.\(property).keyPath,")
+      lines.append("\(deepIndent)\(property): ext <|? CodingKeys.\(property).keyPath")
     case .object(_, _, _):
-      lines.append("\(deepIndent)\(property): ext <|? CodingKeys.\(property).keyPath,")
+      lines.append("\(deepIndent)\(property): ext <|? CodingKeys.\(property).keyPath")
     case .array(_, _):
-      lines.append("\(deepIndent)\(property): ext <||? CodingKeys.\(property).keyPath,")
+      lines.append("\(deepIndent)\(property): ext <||? CodingKeys.\(property).keyPath")
     case .url:
-      lines.append("\(deepIndent)\(property): try? URLTransformer.apply(ext <| CodingKeys.\(property).keyPath),")
+      lines.append("\(deepIndent)\(property): try? URLTransformer.apply(ext <| CodingKeys.\(property).keyPath)")
     case .date( _):
-      lines.append("\(deepIndent)\(property): try? dateTransformer.apply(ext <| CodingKeys.\(property).keyPath),")
+      lines.append("\(deepIndent)\(property): try? dateTransformer.apply(ext <| CodingKeys.\(property).keyPath)")
     }
     return lines.filter({ !$0.isEmpty }).joined(separator: "\n")
   }
